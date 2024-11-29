@@ -43,6 +43,7 @@ class Window(tk.Toplevel):
         query = """
             With temp_moy AS(SELECT code_departement, AVG(temperature_moy_mesure) AS TempM
                                     FROM Mesures
+                                    WHERE  strftime('%Y', date_mesure) = '2018' 
                                     GROUP BY code_departement),
             MINIMUMM AS(SELECT code_departement, MIN(TempM)
                             FROM temp_moy
@@ -92,7 +93,7 @@ class Window(tk.Toplevel):
         plot1 = fig.add_subplot(111)
 
         # Affichage des courbes
-        plot1.plot(range(len(datetime_dates)), graph1, color='#0000FF', label='Les recaords de fraîcheur historiques pour chaque jour de l’année')
+        plot1.plot(range(len(datetime_dates)), graph1, color='#0000FF', label='Les records de fraîcheur historiques pour chaque jour de l’année')
         plot1.plot(range(len(datetime_dates)), graph2, color='#FF0000', label='Les records de chaleur historiques pour chaque jour de l’année')
         plot1.plot(range(len(datetime_dates)), graph3, color='#00FFFF', label='Les températures du département le plus froid de la zone H1 pour chaque jour de l’année 2018.')
         plot1.plot(range(len(datetime_dates)), graph4, color='#FF8300', label='Les températures du département le plus chaud de la zone H1 pour chaque jour de l’année 2018.')
