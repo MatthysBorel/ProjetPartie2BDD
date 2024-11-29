@@ -5,7 +5,7 @@ from utils import db
 
 class Window(tk.Toplevel):
 
-    # Attributs de la classe (pour être en mesure de les utiliser dans les différentes méthodes)
+    # Attributs de la clsse (pour être en mesure de les utiliser dans les différentes méthodes)
     treeView = None
     input = None
     errorLabel = None
