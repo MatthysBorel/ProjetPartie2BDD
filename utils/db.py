@@ -87,7 +87,7 @@ def insertDB():
         print("Insertion de mesures en cours...cela peut prendre un peu de temps")
         # On ajoute les mesures
         read_csv_file(
-             "data/csv/MesuresSmall.csv", ';',
+             "data/csv/Mesures.csv", ';',
              "insert into Mesures values (?, ?, ?, ?, ?)",
              ['code_insee_departement', 'date_obs', 'tmin', 'tmax', 'tmoy']
         )
