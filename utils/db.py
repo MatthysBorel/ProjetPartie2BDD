@@ -87,16 +87,33 @@ def insertDB():
         print("Insertion de mesures en cours...cela peut prendre un peu de temps")
         # On ajoute les mesures
         read_csv_file(
-             "data/csv/Mesures.csv", ';',
+             "data/csv/MesuresSmall.csv", ';',
              "insert into Mesures values (?, ?, ?, ?, ?)",
              ['code_insee_departement', 'date_obs', 'tmin', 'tmax', 'tmoy']
         )
 
-        read_csv_file(
-             "data/csv/Isolation.csv", ';',
-             "insert into Travaux ('code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee', 'type_logement','ann_const_log') values (?, ?, ?, ?, ?, ?, ?)",
-             ['code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee_travaux', 'type_logement','annee_construction']
+        read_csv_file2(
+             "data/csv/Isolation.csv", ';',"""insert into Travaux ('code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee', 'type_logement','ann_const_log') values (?, ?, ?, ?, ?, ?, ?) ;   """
+             ,"""INSERT INTO Isolation (id_travail, poste, isolant, epaisseur, surface) VALUES (?, ?, ?, ?, ?)    """
+             ,['code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee_travaux', 'type_logement','annee_construction']
+             ,['poste_isolation','isolant','epaisseur','surface']
         )
+        read_csv_file2(
+             "data/csv/Chauffage.csv", ';',"""insert into Travaux ('code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee', 'type_logement','ann_const_log') values (?, ?, ?, ?, ?, ?, ?) ;"""
+             ,"""INSERT INTO Chauffage (id_travail, energie_av_tra, energie_inst, generateur, type_chaudiere) VALUES (?, ?, ?, ?, ?)"""
+             ,['code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee_travaux', 'type_logement','annee_construction']
+             ,['energie_chauffage_avt_travaux','energie_chauffage_installee','generateur','type_chaudiere']
+        )
+        
+                
+        read_csv_file2(
+             "data/csv/Photovoltaique.csv", ';',"""insert into Travaux ('code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee', 'type_logement','ann_const_log') values (?, ?, ?, ?, ?, ?, ?) ;"""
+             ,"""
+            INSERT INTO Photovoltaique (id_travail, Puissance_inst, type_pannaux) VALUES (?, ?, ?) """
+            ,['code_region', 'code_departement', 'cout_total_ht', 'cout_induit_ht','annee_travaux', 'type_logement','annee_construction']
+            ,['puissance_installee','type_panneaux']
+        )
+        
 
         
 
@@ -134,6 +151,39 @@ def read_csv_file(csvFile, separator, query, columns):
 
             print(query)
             cursor.execute(query, tuple(tab))
+        except IntegrityError as err:
+            print(err)
+            
+def read_csv_file2(csvFile, separator, query1,query2, columns1,columns2):
+    # Lecture du fichier CSV csvFile avec le séparateur separator
+    # pour chaque ligne, exécution de query en la formatant avec les colonnes columns
+    df = pandas.read_csv(csvFile, sep=separator)
+    df = df.where(pandas.notnull(df), None)
+
+    cursor = data.cursor()
+    for ix, row in df.iterrows():
+        try:
+            tab1 = []
+            tab2=[]
+            for i in range(len(columns1)):
+                # pour échapper les noms avec des apostrophes, on remplace dans les chaines les ' par ''
+                if isinstance(row[columns1[i]], str):
+                    row[columns1[i]] = row[columns1[i]].replace("'","''")
+                tab1.append(row[columns1[i]])
+            
+            
+            for i in range(len(columns2)):
+                # pour échapper les noms avec des apostrophes, on remplace dans les chaines les ' par ''
+                if isinstance(row[columns2[i]], str):
+                    row[columns2[i]] = row[columns2[i]].replace("'","''")
+                tab2.append(row[columns2[i]])
+            
+            print(query1)
+            cursor.execute(query1, tuple(tab1))
+            last_id = cursor.lastrowid
+            tab2.insert(0,last_id)
+            print(query2)
+            cursor.execute(query2, tuple(tab2))
         except IntegrityError as err:
             print(err)
 

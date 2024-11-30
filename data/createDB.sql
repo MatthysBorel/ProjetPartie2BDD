@@ -1,4 +1,4 @@
-
+PRAGMA foreign_keys = ON;
 
 create table Departements (
     code_departement TEXT,
@@ -51,14 +51,14 @@ create table Travaux (
 
 create table Isolation (
     id_travail INTEGER,
-    poste TEXT,
+    poste TEXT DEFAULT NULL,
     isolant TEXT,
     epaisseur INTEGER,
     surface FLOAT,
     constraint pk_id_travail primary key (id_travail),
     constraint fk_region foreign key (id_travail) references Travaux(id_travail)
-    constraint ck_poste check(poste IN ('COMBLES PERDUES', 'ITI', 'ITE','RAMPANTS','SARKING','TOITURE TERRASSE','PANCHER BAS') )
-    constraint ck_isolant check(isolant IN ('AUTRES', 'LAINE VEGETALE', 'LAINE MINERALE',) )
+    constraint ck_poste check(poste IN ('COMBLES PERDUES', 'ITI', 'ITE','RAMPANTS','SARKING','TOITURE TERRASSE','PANCHER BAS','AA') )
+    constraint ck_isolant check(isolant IN ('AUTRES', 'LAINE VEGETALE', 'LAINE MINERALE') )
 );
 
 
@@ -67,13 +67,13 @@ create table Chauffage (
     energie_av_tra TEXT,
     energie_inst TEXT,
     generateur TEXT,
-    type_ch TEXT,
+    type_chaudiere TEXT,
     constraint pk_id_travail primary key (id_travail),
     constraint fk_region foreign key (id_travail) references Travaux(id_travail)
-    constraint ck_energie_av_tra check(energie_av_tra IN ('AUTRES', 'CHAUDIERE', 'INSERT','PAC','POELE','RADIATEUR'))
-    constraint ck_energie_inst check(energie_inst IN ('AUTRES', 'CHAUDIERE', 'INSERT','PAC','POELE','RADIATEUR'))
-    constraint ck_generateur check(generateur IN ('AUTRES', 'BOIS', 'ELECTRICITE','FIOUL','GAZ') )
-    constraint ck_type_ch check(type_ch IN ('STANDARD', 'AIR-EAU', 'A CONDENSATIO','AUTRES','AIR-AIR','GEOTHERMIE','HPE') )
+    constraint ck_energie_av_tra check(energie_av_tra IN ('AUTRES', 'BOIS', 'ELECTRICITE','FIOUL','GAZ'))
+    constraint ck_energie_inst check(energie_inst IN ('AUTRES', 'BOIS', 'ELECTRICITE','FIOUL','GAZ'))
+    constraint ck_generateur check(generateur IN ('AUTRES', 'CHAUDIERE', 'INSERT','PAC','POELE','RADIATEUR') )
+    constraint ck_type_ch check(type_chaudiere IN ('STANDARD', 'AIR-EAU', 'A CONDENSATIO','AUTRES','AIR-AIR','GEOTHERMIE','HPE') )
     
 );
 
@@ -85,4 +85,5 @@ create table Photovoltaique (
     constraint fk_region foreign key (id_travail) references Travaux(id_travail)
     constraint ck_type_pannaux check(type_pannaux IN ('MONOCRISTALLIN', 'POLYCRISTALLIN') )
 );
+
 

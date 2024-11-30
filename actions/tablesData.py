@@ -18,12 +18,25 @@ class Window(tk.Toplevel):
         tab1 = ttk.Frame(tabControl)
         tab2 = ttk.Frame(tabControl)
         tab3 = ttk.Frame(tabControl)
+        tab4 = ttk.Frame(tabControl)
+        tab5 = ttk.Frame(tabControl)
+        tab6 = ttk.Frame(tabControl)
+        tab7 = ttk.Frame(tabControl)
         tabControl.add(tab1, text='Mesures (1000 1ères valeurs)')
         tabControl.add(tab2, text='Départements')
         tabControl.add(tab3, text='Régions')
+        tabControl.add(tab4, text='Travaux')
+        tabControl.add(tab5, text='Isolation')
+        tabControl.add(tab6, text='Chauffage')
+        tabControl.add(tab7, text='Photovoltaique')
         display.defineGridDisplay(tab1, 1, 2)
         display.defineGridDisplay(tab2, 1, 2)
         display.defineGridDisplay(tab3, 1, 2)
+        display.defineGridDisplay(tab4, 1, 2)
+        display.defineGridDisplay(tab5, 1, 2)
+        display.defineGridDisplay(tab6, 1, 2)
+        display.defineGridDisplay(tab7, 1, 2)
+        
         tabControl.grid(row=0, column=0, sticky="nswe")
 
         # Mesures
@@ -61,9 +74,60 @@ class Window(tk.Toplevel):
             ORDER BY code_region
         """
         tree = display.createTreeViewDisplayQuery(tab3, columns, query, 250)
-        scrollbar = ttk.Scrollbar(tab3,ori1ent='vertical',command=tree.yview)
+        scrollbar = ttk.Scrollbar(tab3,orient='vertical',command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         tree.grid(row=0, sticky="nswe")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
         #TODO Q4 Afficher les données des nouvelles tables
+        columns = ('id_travail', 'code_region','code_departement','cout_total_ht','cout_induit_ht','annee','type_logement','ann_const_log')
+        query = """
+            SELECT id_travail, code_region,code_departement,cout_total_ht,cout_induit_ht,annee,type_logement,ann_const_log
+            FROM Travaux
+            ORDER BY id_travail
+        """
+        tree = display.createTreeViewDisplayQuery(tab4, columns, query, 250)
+        scrollbar = ttk.Scrollbar(tab4,orient='vertical',command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        tree.grid(row=0, sticky="nswe")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        
+        
+        
+        columns = ('id_travail', 'poste','isolant','epaisseur','surface')
+        query = """
+            SELECT id_travail, poste,isolant, epaisseur, surface
+            FROM Isolation
+            ORDER BY id_travail
+        """
+        tree = display.createTreeViewDisplayQuery(tab5, columns, query, 250)
+        scrollbar = ttk.Scrollbar(tab5,orient='vertical',command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        tree.grid(row=0, sticky="nswe")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        
+        
+        columns = ('id_travail', 'energie_av_tra','energie_inst','generateur','type_chaudiere')
+        query = """
+            SELECT id_travail, energie_av_tra,energie_inst, generateur, type_chaudiere 
+            FROM Chauffage
+            ORDER BY id_travail
+        """
+        tree = display.createTreeViewDisplayQuery(tab6, columns, query, 250)
+        scrollbar = ttk.Scrollbar(tab6,orient='vertical',command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        tree.grid(row=0, sticky="nswe")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        
+        
+        columns = ('id_travail', 'Puissance_inst','type_pannaux')
+        query = """
+            SELECT id_travail, Puissance_inst,type_pannaux
+            FROM Photovoltaique
+            ORDER BY id_travail
+        """
+        tree = display.createTreeViewDisplayQuery(tab7, columns, query, 250)
+        scrollbar = ttk.Scrollbar(tab7,orient='vertical',command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        tree.grid(row=0, sticky="nswe")
+        scrollbar.grid(row=0, column=1, sticky="ns")
