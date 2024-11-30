@@ -42,24 +42,26 @@ class Window(tk.Toplevel):
 
         query = """
             With temp_moy AS(SELECT code_departement, AVG(temperature_moy_mesure) AS TempM
-                                    FROM Mesures
-                                    WHERE  strftime('%Y', date_mesure) = '2018' 
-                                    GROUP BY code_departement),
-            MINIMUMM AS(SELECT code_departement, MIN(TempM)
-                            FROM temp_moy
-                            GROUP BY code_departement),
-            MAXIMUMM AS(SELECT code_departement, Max(TempM)
-                            FROM temp_moy
-                            GROUP BY code_departement),
-            Partie2 AS (SELECT date_mesure, MIN(temperature_moy_mesure) AS h1min , MAX(temperature_moy_mesure) AS h1max
-                        FROM Mesures JOIN Departements USING (code_departement) JOIN MAXIMUMM USING (code_departement) JOIN MINIMUMM USING (code_departement)
-                        WHERE zone_climatique='H1' AND strftime('%Y', date_mesure) = '2018' 
-                        GROUP BY date_mesure),
+								FROM Mesures JOIN Departements USING (code_departement)
+								WHERE zone_climatique='H1' AND strftime('%Y', date_mesure) = '2018' 
+								GROUP BY code_departement),
+            MINIMUMM AS(SELECT code_departement, MIN(TempM) AS tmin
+                            FROM temp_moy 
+                            ),
+            MAXIMUMM AS(SELECT code_departement, Max(TempM) AS tmax
+                            FROM temp_moy 
+                            ),
+            Partie2 AS(SELECT date_mesure,temperature_moy_mesure AS h1min
+                            FROM MINIMUMM JOIN Mesures USING (code_departement)
+                            WHERE strftime('%Y', date_mesure) = '2018' ),
+            Partie3 AS(SELECT date_mesure,temperature_moy_mesure AS h1max
+                            FROM MAXIMUMM JOIN Mesures USING (code_departement)
+                            WHERE strftime('%Y', date_mesure) = '2018' ),
             Partie1 AS (SELECT date_mesure, MIN(temperature_moy_mesure) AS mini, Max(temperature_moy_mesure) AS maxi
                         FROM Mesures  
                         GROUP BY date_mesure)
-			SELECT date_mesure,mini,maxi,h1min,h1max
-			FROM Partie1 JOIN Partie2 USING (date_mesure)
+            SELECT date_mesure,mini,maxi,h1min,h1max
+            FROM Partie1 JOIN Partie2 USING (date_mesure) JOIN Partie3 USING (date_mesure)
         """
 
         # Extraction des données et affichage dans le tableau
